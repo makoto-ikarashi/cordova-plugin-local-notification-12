@@ -242,6 +242,16 @@ public class LocalNotification extends CordovaPlugin {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // check and set alarms
+            AlarmManager mAlarmManager = context.getSystemService(AlarmManager.class);
+            if (mAlarmManager.canScheduleExactAlarms() == false) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+                cordova.startActivityForResult(this, intent, REQUEST_PERMISSIONS_CALL);
+            }
+        }
+
         command.success();
     }
 
